@@ -1,4 +1,4 @@
-require_relative 'Player'
+require_relative 'player'
 
 class Dealer < Player
 
@@ -9,8 +9,8 @@ class Dealer < Player
     @name = "Dealer"
   end
 
-  def card_move(desk)
-    if @score < 17
+  def card_move(desk, score)
+    if score < 17
       take_card(desk)
     end
   end

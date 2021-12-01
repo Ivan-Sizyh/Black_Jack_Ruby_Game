@@ -26,11 +26,10 @@ class Logic
       case gets.chomp
       when "1"
         @user.take_card(@deck)
-        @dealer.card_move(@deck)
+        @dealer.card_move(@deck, count_points(@dealer))
         do_session_step
       when "2"
-        @dealer.count_points
-        @dealer.card_move(@deck)
+        @dealer.card_move(@deck, count_points(@dealer))
         open_cards
       when "3"
         open_cards
@@ -65,23 +64,23 @@ class Logic
     @interface.show_cards
   end
 
-  def calculate_points
-    reset_score
-    @user.count_points
-    @dealer.count_points
-  end
+  # def calculate_points
+  #   @user.count_points
+  #   @dealer.count_points
+  # end
 
   def open_cards
     @interface.open_cards
-    calculate_points
-    @interface.show_score
-    if @user.score > @dealer.score && @user.score <= 21
+    user_score = count_points(@user)
+    dealer_score = count_points(@dealer)
+    @interface.show_score(user_score,dealer_score)
+    if user_score > dealer_score && user_score <= 21
       win
-    elsif @user.score < @dealer.score && @dealer.score <= 21
+    elsif user_score < dealer_score && dealer_score <= 21
       lose
-    elsif @user.score == @dealer.score
+    elsif user_score == dealer_score
       draw
-    elsif @user.score - @dealer.score < 0
+    elsif user_score - dealer_score < 0
       win
     else
       lose
@@ -120,14 +119,26 @@ class Logic
     end
   end
 
-  def reset_score
-    @user.score = 0
-    @dealer.score = 0
-  end
-
   def fold
     @user.cards.clear
     @dealer.cards.clear
-    reset_score
+  end
+
+  def count_points(user)
+    score = 0
+    user.cards.each do |card|
+      if card.denomination == 'Q' || card.denomination == 'J' || card.denomination == 'K'
+        score += 10
+      elsif card.denomination == 'A'
+        if score + 11 <= 21
+          score += 11
+        else
+          score += 1
+        end
+      else
+        score += card.denomination.to_i
+      end
+    end
+    score
   end
 end

@@ -70,9 +70,9 @@ class Interface
     puts ""
   end
 
-  def show_score
-    puts "Ваши очки: #{@user.score}"
-    puts "Очки диллера: #{@dealer.score}"
+  def show_score(user_score,dealer_score)
+    puts "Ваши очки: #{user_score}"
+    puts "Очки диллера: #{dealer_score}"
   end
 
   def win
